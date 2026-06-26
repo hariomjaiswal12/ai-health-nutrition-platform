@@ -1,0 +1,453 @@
+/* ==================== DOCTORS LIST STYLES ==================== */
+
+.doctors-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* ==================== HEADER ====================  */
+.doctors-header {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: slideDown 0.5s ease-out;
+}
+
+.doctors-header h1 {
+  font-size: 2.5rem;
+  color: #2c5f2d;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+/* ==================== SEARCH SECTION ==================== */
+.search-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 250px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+}
+
+.clear-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+
+.clear-btn:hover {
+  color: #333;
+}
+
+.btn-refresh {
+  padding: 12px 20px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-refresh:hover {
+  background: #45a049;
+  transform: scale(1.05);
+}
+
+/* ==================== RESULTS INFO ==================== */
+.results-info {
+  margin-bottom: 20px;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.results-info strong {
+  color: #2c5f2d;
+}
+
+/* ==================== DOCTORS GRID ==================== */
+.doctors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+/* ==================== DOCTOR CARD ==================== */
+.doctor-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: all 0.3s ease;
+  animation: fadeIn 0.5s ease-out;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.doctor-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Doctor Image */
+.doctor-image {
+  text-align: center;
+  margin-bottom: 15px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.doctor-image img {
+  width: 140px;
+  height: 140px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 3px solid #4CAF50;
+  transition: transform 0.3s ease;
+}
+
+.doctor-image img:hover {
+  transform: scale(1.05);
+}
+
+.default-avatar {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #4CAF50, #2c5f2d);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  font-weight: bold;
+  border: 3px solid #4CAF50;
+}
+
+/* Doctor Info */
+.doctor-info {
+  flex: 1;
+  margin-bottom: 15px;
+}
+
+.doctor-info h3 {
+  color: #2c5f2d;
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.doctor-info p {
+  margin: 8px 0;
+  color: #555;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.specialization {
+  color: #4CAF50 !important;
+  font-weight: 600;
+  background: #f0f8f0;
+  padding: 8px;
+  border-radius: 4px;
+  margin: 10px 0 !important;
+}
+
+.experience,
+.qualifications,
+.languages,
+.fee,
+.availability {
+  padding: 6px 0;
+}
+
+.bio {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+  font-style: italic;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+/* ==================== DOCTOR ACTIONS ==================== */
+.doctor-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-primary {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: #45a049;
+  transform: scale(1.02);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* Contact Buttons */
+.contact-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-whatsapp,
+.btn-call {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.btn-whatsapp {
+  background: #25D366;
+  color: white;
+}
+
+.btn-whatsapp:hover {
+  background: #20BA5A;
+  transform: scale(1.05);
+}
+
+.btn-call {
+  background: #2196F3;
+  color: white;
+}
+
+.btn-call:hover {
+  background: #1976D2;
+  transform: scale(1.05);
+}
+
+/* ==================== LOADING STATE ==================== */
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* ==================== ERROR STATE ==================== */
+.error-message {
+  background: #ffebee;
+  color: #c62828;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-left: 5px solid #c62828;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.error {
+  color: #c62828;
+  text-align: center;
+  font-size: 1.1rem;
+  padding: 40px 20px;
+}
+
+.btn-retry {
+  background: #c62828;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+  margin-top: 10px;
+}
+
+.btn-retry:hover {
+  background: #ad1457;
+}
+
+/* ==================== NO RESULTS ====================  */
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+.no-results p {
+  color: #999;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.btn-clear-search {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-clear-search:hover {
+  background: #45a049;
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .doctors-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .search-section {
+    flex-direction: column;
+  }
+
+  .search-box {
+    min-width: 100%;
+  }
+
+  .doctors-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .doctor-card {
+    padding: 15px;
+  }
+
+  .contact-buttons {
+    flex-direction: column;
+  }
+
+  .btn-whatsapp,
+  .btn-call {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .doctors-list-container {
+    padding: 10px;
+  }
+
+  .doctors-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .doctor-card {
+    padding: 12px;
+  }
+
+  .search-input {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
