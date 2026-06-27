@@ -22,8 +22,13 @@ function Dashboard() {
   const [foods, setFoods] = useState([]);
 
   useEffect(() => {
+    if (!role) {
+      console.log('Waiting for role to load...');
+      return; // Wait until role is available
+    }
     fetchDashboardData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [role]);
 
   const fetchDashboardData = async () => {
     setLoading(true);
@@ -57,19 +62,30 @@ function Dashboard() {
     setLoading(false);
   };
 
+  // Coordinated premium Ayurvedic hex color palette
+  const colors = {
+    primarySage: '#5E8267', // Sage green
+    accentClay: '#A76F53',  // Clay terracotta
+    lightSage: '#8CA893',   // Light muted green
+    wheatGold: '#C5A880',   // Warm wheat gold
+    softRed: '#D07A60',     // Warm cinnamon red
+    creamSoft: '#EAE6DF',   // Muted cream
+    olive: '#C2C0A5'        // Soft olive
+  };
+
   // Gender distribution chart data
   const genderChartData = {
     labels: ['Male', 'Female', 'Other'],
     datasets: [
       {
-        label: 'Patient Gender Distribution',
+        label: 'Patients',
         data: [
           patients.filter(p => p.gender === 'Male').length,
           patients.filter(p => p.gender === 'Female').length,
           patients.filter(p => p.gender === 'Other').length
         ],
-        backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56'],
-        borderWidth: 1
+        backgroundColor: [colors.primarySage, colors.accentClay, colors.wheatGold],
+        borderWidth: 0
       }
     ]
   };
@@ -79,7 +95,7 @@ function Dashboard() {
     labels: ['Grains', 'Vegetables', 'Fruits', 'Spices', 'Herbs', 'Dairy', 'Oils'],
     datasets: [
       {
-        label: 'Food Categories',
+        label: 'Indexed Items',
         data: [
           foods.filter(f => f.category === 'Grains').length,
           foods.filter(f => f.category === 'Vegetables').length,
@@ -90,169 +106,259 @@ function Dashboard() {
           foods.filter(f => f.category === 'Oils').length
         ],
         backgroundColor: [
-          '#FF6384',
-          '#36A2EB',
-          '#FFCE56',
-          '#4BC0C0',
-          '#9966FF',
-          '#FF9F40',
-          '#C9CBCF'
+          colors.accentClay,
+          colors.primarySage,
+          colors.wheatGold,
+          colors.softRed,
+          colors.lightSage,
+          colors.creamSoft,
+          colors.olive
         ],
-        borderWidth: 1
+        borderWidth: 0,
+        borderRadius: 4
       }
     ]
   };
 
-  if (loading) return <p>Loading dashboard...</p>;
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        labels: {
+          font: {
+            family: "'Inter', sans-serif",
+            size: 11
+          },
+          color: '#4e5f52'
+        }
+      }
+    }
+  };
+
+  const barChartOptions = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: {
+          font: { family: "'Inter', sans-serif", size: 10 },
+          color: '#4e5f52'
+        }
+      },
+      y: {
+        grid: { color: 'oklch(88% .022 130 / 0.3)' },
+        ticks: {
+          font: { family: "'Inter', sans-serif", size: 10 },
+          color: '#4e5f52'
+        }
+      }
+    }
+  };
+
+  if (!role) {
+    return (
+      <div className="container" style={{ display: 'flex', justifyContent: 'center', padding: '6rem 0' }}>
+        <p className="font-display" style={{ fontSize: '1.5rem', color: 'var(--muted-foreground)' }}>Loading user session...</p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="container" style={{ display: 'flex', justifyContent: 'center', padding: '6rem 0' }}>
+        <p className="font-display" style={{ fontSize: '1.5rem', color: 'var(--muted-foreground)' }}>Loading dashboard analytics...</p>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1 style={{ marginBottom: '30px' }}>📊 Admin Dashboard</h1>
+    <div className="container">
+      {/* Page Header */}
+      <div style={{ marginBottom: '3.5rem' }}>
+        <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary)', fontWeight: '600', display: 'block', marginBottom: '0.5rem' }}>Overview</span>
+        <h2 className="font-display" style={{ margin: '0 0 0.5rem 0', color: 'var(--foreground)' }}>Health Analytics Dashboard</h2>
+        <p style={{ fontSize: '0.95rem', color: 'var(--muted-foreground)', margin: 0 }}>
+          Real-time stats and metrics across your Ayurvedic clinical registry.
+        </p>
+      </div>
 
-      {/* Statistics Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginBottom: '40px' }}>
-        
+      {/* Statistics Cards Grid */}
+      <section className="dashboard-stats-grid">
         {/* Total Patients Card */}
-        <div style={{ backgroundColor: '#e3f2fd', padding: '25px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-          <div style={{ fontSize: '48px', marginBottom: '10px' }}>👥</div>
-          <h3 style={{ margin: '10px 0', color: '#1976d2' }}>Total Patients</h3>
-          <p style={{ fontSize: '36px', fontWeight: 'bold', margin: '10px 0', color: '#0d47a1' }}>{stats.totalPatients}</p>
+        <div className="dashboard-stat-card">
+          <div className="dashboard-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+          <h4 className="dashboard-stat-title">Patients Registered</h4>
+          <p className="dashboard-stat-num">{stats.totalPatients}</p>
           <button 
             onClick={() => navigate('/patients')} 
-            style={{ padding: '8px 16px', backgroundColor: '#1976d2', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', marginTop: '10px' }}
+            className="dashboard-stat-btn"
           >
-            View All
+            Manage Patients
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </button>
         </div>
 
         {/* Total Foods Card */}
-        <div style={{ backgroundColor: '#f3e5f5', padding: '25px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-          <div style={{ fontSize: '48px', marginBottom: '10px' }}>🍎</div>
-          <h3 style={{ margin: '10px 0', color: '#7b1fa2' }}>Ayurvedic Foods</h3>
-          <p style={{ fontSize: '36px', fontWeight: 'bold', margin: '10px 0', color: '#4a148c' }}>{stats.totalFoods}</p>
+        <div className="dashboard-stat-card">
+          <div className="dashboard-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12A10 10 0 0 1 12 2zm0 15c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5z"></path></svg>
+          </div>
+          <h4 className="dashboard-stat-title">Ayurvedic Foods</h4>
+          <p className="dashboard-stat-num">{stats.totalFoods}</p>
           <button 
             onClick={() => navigate('/foods')} 
-            style={{ padding: '8px 16px', backgroundColor: '#7b1fa2', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', marginTop: '10px' }}
+            className="dashboard-stat-btn"
           >
-            View All
+            Browse Foods
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </button>
         </div>
 
         {/* Total Diet Plans Card */}
-        <div style={{ backgroundColor: '#e8f5e9', padding: '25px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-          <div style={{ fontSize: '48px', marginBottom: '10px' }}>📋</div>
-          <h3 style={{ margin: '10px 0', color: '#388e3c' }}>Diet Plans</h3>
-          <p style={{ fontSize: '36px', fontWeight: 'bold', margin: '10px 0', color: '#1b5e20' }}>{stats.totalDietPlans}</p>
+        <div className="dashboard-stat-card">
+          <div className="dashboard-stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          </div>
+          <h4 className="dashboard-stat-title">Diet Plans Created</h4>
+          <p className="dashboard-stat-num">{stats.totalDietPlans}</p>
           <button 
-            onClick={() => navigate('/diet-plans')} 
-            style={{ padding: '8px 16px', backgroundColor: '#388e3c', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', marginTop: '10px' }}
+            onClick={() => navigate('/dietplans')} 
+            className="dashboard-stat-btn"
           >
-            View All
+            Manage Diets
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </button>
         </div>
 
         {/* Total Users Card (Admin Only) */}
         {role === 'admin' && (
-          <div style={{ backgroundColor: '#fff3e0', padding: '25px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-            <div style={{ fontSize: '48px', marginBottom: '10px' }}>👨‍⚕️</div>
-            <h3 style={{ margin: '10px 0', color: '#f57c00' }}>Total Users</h3>
-            <p style={{ fontSize: '36px', fontWeight: 'bold', margin: '10px 0', color: '#e65100' }}>{stats.totalUsers}</p>
+          <div className="dashboard-stat-card">
+            <div className="dashboard-stat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </div>
+            <h4 className="dashboard-stat-title">Active System Users</h4>
+            <p className="dashboard-stat-num">{stats.totalUsers}</p>
             <button 
-              onClick={() => navigate('/users')} 
-              style={{ padding: '8px 16px', backgroundColor: '#f57c00', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', marginTop: '10px' }}
+              onClick={() => navigate('/admin-panel')} 
+              className="dashboard-stat-btn"
             >
-              Manage Users
+              System Admin
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </button>
           </div>
         )}
-      </div>
+      </section>
 
       {/* Charts Section */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '30px', marginBottom: '40px' }}>
-        
+      <section className="dashboard-charts-grid">
         {/* Patient Gender Distribution */}
-        <div style={{ backgroundColor: 'white', padding: '25px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ marginBottom: '20px', color: '#333' }}>Patient Gender Distribution</h3>
+        <div className="dashboard-chart-card">
+          <h3 className="dashboard-chart-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+            Gender Demographics
+          </h3>
           {patients.length > 0 ? (
-            <Pie data={genderChartData} options={{ responsive: true, maintainAspectRatio: true }} />
+            <div style={{ maxHeight: '260px', display: 'flex', justifyContent: 'center' }}>
+              <Pie data={genderChartData} options={chartOptions} />
+            </div>
           ) : (
-            <p style={{ textAlign: 'center', color: '#999' }}>No patient data available</p>
+            <div style={{ height: '200px', display: 'grid', placeItems: 'center' }}>
+              <p style={{ color: 'var(--muted-foreground)', fontSize: '0.875rem', fontStyle: 'italic' }}>No demographic data available</p>
+            </div>
           )}
         </div>
 
         {/* Food Categories */}
-        <div style={{ backgroundColor: 'white', padding: '25px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ marginBottom: '20px', color: '#333' }}>Food Database by Category</h3>
+        <div className="dashboard-chart-card">
+          <h3 className="dashboard-chart-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            Food Classification
+          </h3>
           {foods.length > 0 ? (
-            <Bar 
-              data={foodCategoryData} 
-              options={{ 
-                responsive: true, 
-                maintainAspectRatio: true,
-                plugins: {
-                  legend: { display: false }
-                }
-              }} 
-            />
+            <div style={{ maxHeight: '260px', display: 'flex', justifyContent: 'center' }}>
+              <Bar data={foodCategoryData} options={barChartOptions} />
+            </div>
           ) : (
-            <p style={{ textAlign: 'center', color: '#999' }}>No food data available</p>
+            <div style={{ height: '200px', display: 'grid', placeItems: 'center' }}>
+              <p style={{ color: 'var(--muted-foreground)', fontSize: '0.875rem', fontStyle: 'italic' }}>No food classification data available</p>
+            </div>
           )}
         </div>
-      </div>
+      </section>
 
-      {/* Recent Activity */}
-      <div style={{ backgroundColor: 'white', padding: '25px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', marginBottom: '40px' }}>
-        <h3 style={{ marginBottom: '20px', color: '#333' }}>📅 Recent Patients</h3>
+      {/* Recent Activity Table */}
+      <section className="dashboard-table-card">
+        <h3 className="dashboard-table-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Recently Admitted Patients
+        </h3>
         {patients.length > 0 ? (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ backgroundColor: '#f5f5f5', textAlign: 'left' }}>
-                <th style={{ padding: '12px', borderBottom: '2px solid #ddd' }}>Name</th>
-                <th style={{ padding: '12px', borderBottom: '2px solid #ddd' }}>Age</th>
-                <th style={{ padding: '12px', borderBottom: '2px solid #ddd' }}>Gender</th>
-                <th style={{ padding: '12px', borderBottom: '2px solid #ddd' }}>Diagnosis</th>
-              </tr>
-            </thead>
-            <tbody>
-              {patients.slice(0, 5).map((patient) => (
-                <tr key={patient._id} style={{ borderBottom: '1px solid #eee' }}>
-                  <td style={{ padding: '12px' }}>{patient.name}</td>
-                  <td style={{ padding: '12px' }}>{patient.age}</td>
-                  <td style={{ padding: '12px' }}>{patient.gender}</td>
-                  <td style={{ padding: '12px' }}>{patient.diagnosis}</td>
+          <div className="dashboard-table-wrapper">
+            <table className="dashboard-data-table">
+              <thead>
+                <tr>
+                  <th>Patient Name</th>
+                  <th>Age</th>
+                  <th>Gender</th>
+                  <th>Clinical Imbalance / Diagnosis</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {patients.slice(0, 5).map((patient) => (
+                  <tr key={patient._id}>
+                    <td><strong style={{ color: 'var(--foreground)' }}>{patient.name}</strong></td>
+                    <td>{patient.age}</td>
+                    <td>{patient.gender}</td>
+                    <td>{patient.diagnosis}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <p style={{ textAlign: 'center', color: '#999' }}>No recent patients</p>
+          <div style={{ padding: '3rem 0', textAlign: 'center' }}>
+            <p style={{ color: 'var(--muted-foreground)', fontStyle: 'italic', margin: 0 }}>No recent patient registrations found</p>
+          </div>
         )}
-      </div>
+      </section>
 
-      {/* Quick Actions */}
-      <div style={{ backgroundColor: 'white', padding: '25px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-        <h3 style={{ marginBottom: '20px', color: '#333' }}>⚡ Quick Actions</h3>
-        <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+      {/* Quick Actions Panel */}
+      <section className="dashboard-actions-card">
+        <h3 className="dashboard-table-title" style={{ marginBottom: '1.25rem' }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          Clinical Actions
+        </h3>
+        <div className="dashboard-actions-grid">
           <button 
             onClick={() => navigate('/patients')} 
-            style={{ padding: '12px 24px', backgroundColor: '#1976d2', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '16px' }}
+            className="dashboard-action-btn secondary"
           >
-            ➕ Add Patient
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+            Register Patient
           </button>
           <button 
             onClick={() => navigate('/foods')} 
-            style={{ padding: '12px 24px', backgroundColor: '#7b1fa2', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '16px' }}
+            className="dashboard-action-btn secondary"
           >
-            ➕ Add Food
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+            Index Food Item
           </button>
           <button 
-            onClick={() => navigate('/diet-plans')} 
-            style={{ padding: '12px 24px', backgroundColor: '#388e3c', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '16px' }}
+            onClick={() => navigate('/dietplans')} 
+            className="dashboard-action-btn primary"
           >
-            ➕ Create Diet Plan
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+            Formulate Diet Plan
           </button>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

@@ -7,7 +7,6 @@ function DoshaQuiz() {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [responses, setResponses] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
   const [assessmentId, setAssessmentId] = useState(null);
   const [message, setMessage] = useState('');
@@ -60,7 +59,6 @@ function DoshaQuiz() {
   };
 
   const submitQuiz = async (finalResponses) => {
-    setLoading(true);
     setStep('loading');
     try {
       const payload = {
@@ -82,7 +80,6 @@ function DoshaQuiz() {
       setMessage('Error submitting quiz. Please try again.');
       setStep('quiz');
     }
-    setLoading(false);
   };
 
   const downloadPDF = async () => {
@@ -106,11 +103,11 @@ function DoshaQuiz() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      setMessage('PDF downloaded successfully!');
+      setMessage('✅ PDF downloaded successfully!');
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       console.error('PDF download error:', error);
-      setMessage('Error downloading PDF');
+      setMessage('❌ Error downloading PDF');
     }
   };
 
@@ -124,139 +121,107 @@ function DoshaQuiz() {
     setMessage('');
   };
 
-  // Get dosha color
   const getDoshaColor = (dosha) => {
     const colors = {
-      Vata: '#9C27B0',
-      Pitta: '#FF5722',
-      Kapha: '#4CAF50'
+      Vata: '#9C27B0',  // Purple
+      Pitta: '#FF5722', // Deep Orange
+      Kapha: '#4CAF50'  // Green
     };
-    return colors[dosha] || '#999';
+    return colors[dosha] || '#607D8B';
   };
 
   // Render functions for each step
   const renderIntro = () => (
     <div className="card" style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-      <div style={{ fontSize: '64px', marginBottom: '20px' }}>🧘</div>
-      <h2 style={{ color: '#2C5F2D', marginBottom: '20px' }}>Discover Your Dosha</h2>
-      <p style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)', lineHeight: '1.8', color: '#555', marginBottom: '30px' }}>
-        Take this comprehensive Ayurvedic assessment to discover your unique mind-body constitution (Prakriti). 
-        Answer 20 questions about your physical characteristics, mental tendencies, and lifestyle preferences 
-        to receive personalized health and diet recommendations.
+      <div style={{ fontSize: '4.5rem', marginBottom: '1.5rem', animation: 'bounce 2.5s infinite' }}>🧘</div>
+      <h2 style={{ color: 'var(--primary-dark)', fontFamily: "'Playfair Display', serif" }}>Discover Your Dosha</h2>
+      <p style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#555', marginBottom: '2rem' }}>
+        Take this diagnostic Ayurvedic Prakriti assessment to identify your mind-body constitution.
+        Select physical features and emotional traits that closely match your natural baseline.
       </p>
 
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-        gap: '20px', 
-        marginBottom: '30px',
-        textAlign: 'left'
-      }}>
-        <div style={{ padding: '20px', backgroundColor: '#f3e5f5', borderRadius: '8px' }}>
-          <div style={{ fontSize: '32px', marginBottom: '10px' }}>⚖️</div>
-          <h4 style={{ color: '#7b1fa2', marginBottom: '8px' }}>Vata</h4>
-          <p style={{ fontSize: '14px', color: '#666' }}>Air & Ether - Movement, creativity, quick thinking</p>
+      <div className="grid mb-4" style={{ textAlign: 'left', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+        <div style={{ padding: '20px', backgroundColor: '#F3E5F5', borderRadius: '12px', borderLeft: '4px solid #9C27B0' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '8px' }}>⚖️</div>
+          <h4 style={{ color: '#7B1FA2', margin: '0 0 5px 0', fontFamily: "'Playfair Display', serif" }}>Vata Dosha</h4>
+          <p style={{ fontSize: '0.85rem', color: '#666', margin: 0 }}>Air & Space: Governs movement, respiration, activity, and creative expression.</p>
         </div>
-        <div style={{ padding: '20px', backgroundColor: '#fbe9e7', borderRadius: '8px' }}>
-          <div style={{ fontSize: '32px', marginBottom: '10px' }}>🔥</div>
-          <h4 style={{ color: '#d84315', marginBottom: '8px' }}>Pitta</h4>
-          <p style={{ fontSize: '14px', color: '#666' }}>Fire & Water - Transformation, intelligence, passion</p>
+        <div style={{ padding: '20px', backgroundColor: '#FBE9E7', borderRadius: '12px', borderLeft: '4px solid #FF5722' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🔥</div>
+          <h4 style={{ color: '#D84315', margin: '0 0 5px 0', fontFamily: "'Playfair Display', serif" }}>Pitta Dosha</h4>
+          <p style={{ fontSize: '0.85rem', color: '#666', margin: 0 }}>Fire & Water: Governs digestion, metabolic transformation, and intellect.</p>
         </div>
-        <div style={{ padding: '20px', backgroundColor: '#e8f5e9', borderRadius: '8px' }}>
-          <div style={{ fontSize: '32px', marginBottom: '10px' }}>🌿</div>
-          <h4 style={{ color: '#2e7d32', marginBottom: '8px' }}>Kapha</h4>
-          <p style={{ fontSize: '14px', color: '#666' }}>Earth & Water - Structure, stability, endurance</p>
+        <div style={{ padding: '20px', backgroundColor: '#E8F5E9', borderRadius: '12px', borderLeft: '4px solid #4CAF50' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🌿</div>
+          <h4 style={{ color: '#2E7D32', margin: '0 0 5px 0', fontFamily: "'Playfair Display', serif" }}>Kapha Dosha</h4>
+          <p style={{ fontSize: '0.85rem', color: '#666', margin: 0 }}>Earth & Water: Governs tissue structures, lubrication, resistance, and stability.</p>
         </div>
       </div>
 
       <button 
         onClick={() => setStep('personal')}
-        style={{ 
-          padding: '15px 40px', 
-          backgroundColor: '#2C5F2D', 
-          color: 'white', 
-          border: 'none', 
-          borderRadius: '8px',
-          fontSize: 'clamp(1rem, 2vw, 1.125rem)',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          transition: 'transform 0.2s'
-        }}
-        onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-        onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+        className="btn btn-large"
       >
-        Start Assessment
+        Start Quiz (20 Questions)
       </button>
 
-      <p style={{ marginTop: '20px', fontSize: '14px', color: '#999' }}>
-        ⏱️ Takes approximately 5-7 minutes
+      <p style={{ marginTop: '15px', fontSize: '0.85rem', color: '#999' }}>
+        ⏱️ Takes approximately 5-7 minutes.
       </p>
     </div>
   );
 
   const renderPersonalInfo = () => (
     <div className="card" style={{ maxWidth: '600px', margin: '0 auto' }}>
-      <h2 style={{ color: '#2C5F2D', marginBottom: '20px', textAlign: 'center' }}>Personal Information</h2>
-      <p style={{ textAlign: 'center', color: '#666', marginBottom: '30px' }}>
-        Please provide some basic information to personalize your results
+      <h2 style={{ color: 'var(--primary-dark)', marginBottom: '10px', textAlign: 'center', fontFamily: "'Playfair Display', serif" }}>Personal Profile</h2>
+      <p style={{ textAlign: 'center', color: '#666', marginBottom: '2rem' }}>
+        Provide details to record your assessment results on the progress graphs.
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         <div className="form-group">
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#333' }}>
-            Full Name *
-          </label>
+          <label>Full Name *</label>
           <input
             type="text"
             value={personalInfo.name}
             onChange={(e) => setPersonalInfo({ ...personalInfo, name: e.target.value })}
             placeholder="Enter your full name"
             required
-            style={{ width: '100%', padding: '12px', fontSize: '16px' }}
           />
         </div>
 
         <div className="form-group">
-          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#333' }}>
-            Email (Optional)
-          </label>
+          <label>Email Address (Optional)</label>
           <input
             type="email"
             value={personalInfo.email}
             onChange={(e) => setPersonalInfo({ ...personalInfo, email: e.target.value })}
             placeholder="your@email.com"
-            style={{ width: '100%', padding: '12px', fontSize: '16px' }}
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+        <div className="form-row">
           <div className="form-group">
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#333' }}>
-              Age *
-            </label>
+            <label>Age *</label>
             <input
               type="number"
               value={personalInfo.age}
               onChange={(e) => setPersonalInfo({ ...personalInfo, age: e.target.value })}
-              placeholder="25"
+              placeholder="e.g., 25"
               min="1"
               max="120"
               required
-              style={{ width: '100%', padding: '12px', fontSize: '16px' }}
             />
           </div>
 
           <div className="form-group">
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#333' }}>
-              Gender *
-            </label>
+            <label>Gender *</label>
             <select
               value={personalInfo.gender}
               onChange={(e) => setPersonalInfo({ ...personalInfo, gender: e.target.value })}
               required
-              style={{ width: '100%', padding: '12px', fontSize: '16px' }}
             >
-              <option value="">Select</option>
+              <option value="">Select Gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
               <option value="Other">Other</option>
@@ -270,37 +235,20 @@ function DoshaQuiz() {
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+        <div className="form-actions" style={{ borderTop: 'none', paddingTop: 0, marginTop: '1rem' }}>
           <button
             onClick={() => setStep('intro')}
-            style={{
-              flex: 1,
-              padding: '12px',
-              backgroundColor: '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '16px',
-              cursor: 'pointer'
-            }}
+            className="btn btn-outline"
+            style={{ flex: 1 }}
           >
             Back
           </button>
           <button
             onClick={startQuiz}
-            style={{
-              flex: 1,
-              padding: '12px',
-              backgroundColor: '#2C5F2D',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              cursor: 'pointer'
-            }}
+            className="btn btn-success"
+            style={{ flex: 1 }}
           >
-            Continue to Quiz
+            Continue
           </button>
         </div>
       </div>
@@ -308,96 +256,107 @@ function DoshaQuiz() {
   );
 
   const renderQuiz = () => {
-    if (questions.length === 0) return <p>Loading questions...</p>;
+    if (questions.length === 0) return <div className="container"><p className="text-center">Loading quiz items...</p></div>;
 
     const currentQuestion = questions[currentQuestionIndex];
     const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
     return (
-      <div className="card" style={{ maxWidth: '800px', margin: '0 auto' }}>
+      <div className="card" style={{ maxWidth: '800px', margin: '0 auto', animation: 'fadeInDown 0.4s ease-out' }}>
         {/* Progress Bar */}
-        <div style={{ marginBottom: '30px' }}>
+        <div style={{ marginBottom: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '14px', color: '#666' }}>
+            <span style={{ fontSize: '0.9rem', color: '#666', fontWeight: '500' }}>
               Question {currentQuestionIndex + 1} of {questions.length}
             </span>
-            <span style={{ fontSize: '14px', color: '#2C5F2D', fontWeight: 'bold' }}>
-              {Math.round(progress)}%
+            <span style={{ fontSize: '0.9rem', color: 'var(--primary-color)', fontWeight: 'bold' }}>
+              {Math.round(progress)}% Complete
             </span>
           </div>
           <div style={{ 
             width: '100%', 
             height: '8px', 
-            backgroundColor: '#e0e0e0', 
+            backgroundColor: '#E0E0E0', 
             borderRadius: '4px',
             overflow: 'hidden'
           }}>
             <div style={{ 
               width: `${progress}%`, 
               height: '100%', 
-              backgroundColor: '#2C5F2D',
+              backgroundColor: 'var(--primary-color)',
               transition: 'width 0.3s ease'
             }} />
           </div>
         </div>
 
-        {/* Question */}
-        <div style={{ marginBottom: '30px' }}>
+        {/* Question Heading */}
+        <div style={{ marginBottom: '2rem' }}>
           <span style={{ 
             display: 'inline-block',
             padding: '4px 12px',
-            backgroundColor: '#e8f5e9',
-            color: '#2C5F2D',
+            backgroundColor: '#E8F5E9',
+            color: 'var(--primary-color)',
             borderRadius: '20px',
-            fontSize: '12px',
+            fontSize: '0.75rem',
             fontWeight: 'bold',
-            marginBottom: '15px'
+            marginBottom: '10px',
+            textTransform: 'uppercase'
           }}>
-            {currentQuestion.category.toUpperCase()}
+            Category: {currentQuestion.category}
           </span>
-          <h3 style={{ fontSize: 'clamp(1.125rem, 3vw, 1.5rem)', color: '#333', lineHeight: '1.6' }}>
+          <h3 style={{ fontSize: '1.4rem', color: '#333', lineHeight: '1.5', margin: 0, fontFamily: "'Playfair Display', serif" }}>
             {currentQuestion.question}
           </h3>
         </div>
 
         {/* Answer Options */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          {currentQuestion.options.map((option, index) => (
-            <button
-              key={index}
-              onClick={() => handleAnswer(option.text)}
-              style={{
-                padding: '20px',
-                backgroundColor: 'white',
-                border: '2px solid #e0e0e0',
-                borderRadius: '10px',
-                textAlign: 'left',
-                cursor: 'pointer',
-                fontSize: 'clamp(0.9rem, 2vw, 1rem)',
-                transition: 'all 0.2s ease',
-                color: '#333'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.borderColor = getDoshaColor(option.dosha);
-                e.target.style.backgroundColor = '#f9f9f9';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.borderColor = '#e0e0e0';
-                e.target.style.backgroundColor = 'white';
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {currentQuestion.options.map((option, index) => {
+            const dColor = getDoshaColor(option.dosha);
+            return (
+              <button
+                key={index}
+                onClick={() => handleAnswer(option.text)}
+                style={{
+                  padding: '1.25rem',
+                  backgroundColor: 'white',
+                  border: '2px solid #E0E0E0',
+                  borderRadius: '10px',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  transition: 'all 0.2s ease',
+                  color: '#333',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  fontWeight: '500'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = dColor;
+                  e.currentTarget.style.backgroundColor = '#F8FAFB';
+                  e.currentTarget.style.transform = 'translateX(5px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#E0E0E0';
+                  e.currentTarget.style.backgroundColor = 'white';
+                  e.currentTarget.style.transform = 'none';
+                }}
+              >
                 <div style={{ 
-                  width: '24px', 
-                  height: '24px', 
+                  width: '18px', 
+                  height: '18px', 
                   borderRadius: '50%', 
-                  border: '2px solid #ddd',
-                  flexShrink: 0
+                  border: '2px solid #ccc',
+                  flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }} />
                 <span>{option.text}</span>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       </div>
     );
@@ -405,12 +364,12 @@ function DoshaQuiz() {
 
   const renderLoading = () => (
     <div className="card" style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
-      <div style={{ fontSize: '64px', marginBottom: '20px', animation: 'spin 2s linear infinite' }}>
+      <div style={{ fontSize: '4.5rem', marginBottom: '1.5rem', animation: 'spin 2s linear infinite', display: 'inline-block' }}>
         🌀
       </div>
-      <h3 style={{ color: '#2C5F2D', marginBottom: '10px' }}>Analyzing Your Responses...</h3>
+      <h3 style={{ color: 'var(--primary-color)', marginBottom: '10px', fontFamily: "'Playfair Display', serif" }}>Calculating Prakriti...</h3>
       <p style={{ color: '#666' }}>
-        Calculating your unique dosha constitution based on Ayurvedic principles
+        Determining your physiological ratios of Vata, Pitta, and Kapha constitution elements.
       </p>
       <style>{`
         @keyframes spin {
@@ -435,182 +394,147 @@ function DoshaQuiz() {
     };
 
     return (
-      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '1000px', margin: '0 auto', animation: 'fadeInDown 0.5s ease-out' }}>
         {/* Results Header */}
-        <div className="card" style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <div style={{ fontSize: '64px', marginBottom: '15px' }}>🎉</div>
-          <h2 style={{ color: '#2C5F2D', marginBottom: '10px' }}>Your Dosha Assessment Results</h2>
-          <p style={{ fontSize: '18px', color: '#666' }}>
-            Hello <strong>{personalInfo.name}</strong>, here's your personalized Ayurvedic constitution
+        <div className="card text-center mb-4">
+          <div style={{ fontSize: '4.5rem', marginBottom: '10px' }}>🎉</div>
+          <h2 style={{ color: 'var(--primary-dark)', margin: 0, fontFamily: "'Playfair Display', serif" }}>Your Constitutional Prakriti</h2>
+          <p style={{ fontSize: '1.1rem', color: '#666', marginTop: '10px' }}>
+            Hello <strong>{personalInfo.name}</strong>, here is your personalized mind-body blueprint report:
           </p>
         </div>
 
         {/* Dosha Percentages & Chart */}
-        <div className="grid mb-3" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+        <div className="grid mb-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
           <div className="card">
-            <h3 className="mb-2">Your Dosha Distribution</h3>
-            <Pie data={chartData} options={{ responsive: true, maintainAspectRatio: true }} />
+            <h3 className="mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>Dosha Percentage Chart</h3>
+            <div style={{ maxHeight: '280px', display: 'flex', justifyContent: 'center' }}>
+              <Pie data={chartData} options={{ responsive: true, maintainAspectRatio: true }} />
+            </div>
           </div>
 
-          <div className="card">
-            <h3 className="mb-2">Constitution Breakdown</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', justify: 'space-between' }}>
+            <h3 className="mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>Elemental Score</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                <div style={{ display: 'flex', justify: 'space-between', marginBottom: '5px' }}>
                   <span style={{ fontWeight: 'bold', color: '#9C27B0' }}>⚖️ Vata</span>
                   <span style={{ fontWeight: 'bold' }}>{results.vata}%</span>
                 </div>
-                <div style={{ width: '100%', height: '10px', backgroundColor: '#f0f0f0', borderRadius: '5px' }}>
-                  <div style={{ 
-                    width: `${results.vata}%`, 
-                    height: '100%', 
-                    backgroundColor: '#9C27B0', 
-                    borderRadius: '5px',
-                    transition: 'width 1s ease'
-                  }} />
+                <div style={{ width: '100%', height: '10px', backgroundColor: '#F0F0F0', borderRadius: '5px', overflow: 'hidden' }}>
+                  <div style={{ width: `${results.vata}%`, height: '100%', backgroundColor: '#9C27B0' }} />
                 </div>
               </div>
 
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                <div style={{ display: 'flex', justify: 'space-between', marginBottom: '5px' }}>
                   <span style={{ fontWeight: 'bold', color: '#FF5722' }}>🔥 Pitta</span>
                   <span style={{ fontWeight: 'bold' }}>{results.pitta}%</span>
                 </div>
-                <div style={{ width: '100%', height: '10px', backgroundColor: '#f0f0f0', borderRadius: '5px' }}>
-                  <div style={{ 
-                    width: `${results.pitta}%`, 
-                    height: '100%', 
-                    backgroundColor: '#FF5722', 
-                    borderRadius: '5px',
-                    transition: 'width 1s ease'
-                  }} />
+                <div style={{ width: '100%', height: '10px', backgroundColor: '#F0F0F0', borderRadius: '5px', overflow: 'hidden' }}>
+                  <div style={{ width: `${results.pitta}%`, height: '100%', backgroundColor: '#FF5722' }} />
                 </div>
               </div>
 
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                <div style={{ display: 'flex', justify: 'space-between', marginBottom: '5px' }}>
                   <span style={{ fontWeight: 'bold', color: '#4CAF50' }}>🌿 Kapha</span>
                   <span style={{ fontWeight: 'bold' }}>{results.kapha}%</span>
                 </div>
-                <div style={{ width: '100%', height: '10px', backgroundColor: '#f0f0f0', borderRadius: '5px' }}>
-                  <div style={{ 
-                    width: `${results.kapha}%`, 
-                    height: '100%', 
-                    backgroundColor: '#4CAF50', 
-                    borderRadius: '5px',
-                    transition: 'width 1s ease'
-                  }} />
+                <div style={{ width: '100%', height: '10px', backgroundColor: '#F0F0F0', borderRadius: '5px', overflow: 'hidden' }}>
+                  <div style={{ width: `${results.kapha}%`, height: '100%', backgroundColor: '#4CAF50' }} />
                 </div>
               </div>
             </div>
 
             <div style={{ 
-              marginTop: '30px', 
-              padding: '20px', 
-              backgroundColor: '#e8f5e9', 
+              marginTop: '25px', 
+              padding: '15px', 
+              backgroundColor: '#E8F5E9', 
               borderRadius: '8px',
-              textAlign: 'center'
+              textAlign: 'center',
+              border: '1px solid #C8E6C9'
             }}>
-              <h4 style={{ color: '#2C5F2D', marginBottom: '5px' }}>Primary Dosha</h4>
-              <p style={{ fontSize: '24px', fontWeight: 'bold', color: getDoshaColor(results.primaryDosha), margin: 0 }}>
+              <h4 style={{ color: '#2E7D32', margin: '0 0 5px 0', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Primary Dosha Type</h4>
+              <p style={{ fontSize: '1.75rem', fontWeight: 'bold', color: getDoshaColor(results.primaryDosha), margin: 0 }}>
                 {results.primaryDosha}
               </p>
               {results.secondaryDosha && (
-                <>
-                  <p style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>Secondary: {results.secondaryDosha}</p>
-                </>
+                <p style={{ fontSize: '0.85rem', color: '#666', margin: '4px 0 0 0' }}>Secondary Influence: {results.secondaryDosha}</p>
               )}
             </div>
           </div>
         </div>
 
         {/* Diet Recommendations */}
-        <div className="card mb-3">
-          <h3 className="mb-2">🍎 Diet Recommendations</h3>
-          <ul style={{ lineHeight: '1.8', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>
+        <div className="card mb-4" style={{ borderLeft: '5px solid var(--primary-color)' }}>
+          <h3 className="mb-3" style={{ color: 'var(--primary-dark)', fontFamily: "'Playfair Display', serif" }}>🍎 Ayurvedic Diet Guidance</h3>
+          <ul style={{ paddingLeft: '20px', lineHeight: '1.8', margin: 0 }}>
             {results.dietRecommendations && results.dietRecommendations.map((rec, index) => (
-              <li key={index}>{rec}</li>
+              <li key={index} style={{ marginBottom: '8px' }}>{rec}</li>
             ))}
           </ul>
         </div>
 
-        {/* Foods to Favor */}
-        <div className="grid mb-3" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-          <div className="card" style={{ backgroundColor: '#e8f5e9' }}>
-            <h3 className="mb-2" style={{ color: '#2C5F2D' }}>✅ Foods to Favor</h3>
-            <ul style={{ lineHeight: '1.6', fontSize: '14px' }}>
+        {/* Foods to Favor & Avoid */}
+        <div className="grid mb-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
+          <div className="card" style={{ backgroundColor: '#E8F5E9', border: '1px solid #C8E6C9' }}>
+            <h3 className="mb-3" style={{ color: '#2E7D32', fontFamily: "'Playfair Display', serif" }}>✅ Recommended Foods</h3>
+            <ul style={{ paddingLeft: '20px', lineHeight: '1.6', margin: 0, fontSize: '0.925rem' }}>
               {results.foodsToFavor && results.foodsToFavor.map((food, index) => (
-                <li key={index}>{food}</li>
+                <li key={index} style={{ marginBottom: '4px' }}>{food}</li>
               ))}
             </ul>
           </div>
 
-          <div className="card" style={{ backgroundColor: '#ffebee' }}>
-            <h3 className="mb-2" style={{ color: '#c62828' }}>❌ Foods to Avoid</h3>
-            <ul style={{ lineHeight: '1.6', fontSize: '14px' }}>
+          <div className="card" style={{ backgroundColor: '#FFEBEE', border: '1px solid #FFCDD2' }}>
+            <h3 className="mb-3" style={{ color: '#C62828', fontFamily: "'Playfair Display', serif" }}>❌ Foods to Limit / Avoid</h3>
+            <ul style={{ paddingLeft: '20px', lineHeight: '1.6', margin: 0, fontSize: '0.925rem' }}>
               {results.foodsToAvoid && results.foodsToAvoid.map((food, index) => (
-                <li key={index}>{food}</li>
+                <li key={index} style={{ marginBottom: '4px' }}>{food}</li>
               ))}
             </ul>
           </div>
         </div>
 
         {/* Lifestyle Recommendations */}
-        <div className="card mb-3">
-          <h3 className="mb-2">🧘 Lifestyle Recommendations</h3>
-          <ul style={{ lineHeight: '1.8', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>
+        <div className="card mb-4" style={{ borderLeft: '5px solid var(--info-color)' }}>
+          <h3 className="mb-3" style={{ color: '#0D47A1', fontFamily: "'Playfair Display', serif" }}>🧘 Lifestyle & Vihara Recommendations</h3>
+          <ul style={{ paddingLeft: '20px', lineHeight: '1.8', margin: 0 }}>
             {results.lifestyleRecommendations && results.lifestyleRecommendations.map((rec, index) => (
-              <li key={index}>{rec}</li>
+              <li key={index} style={{ marginBottom: '8px' }}>{rec}</li>
             ))}
           </ul>
         </div>
 
-        {/* Action Buttons */}
-        <div className="card" style={{ textAlign: 'center' }}>
+        {/* Action Panel */}
+        <div className="card text-center">
+          {message && (
+            <div className={`alert ${message.includes('❌') ? 'alert-error' : 'alert-success'}`} style={{ marginBottom: '1.5rem' }}>
+              {message}
+            </div>
+          )}
           <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <button
               onClick={downloadPDF}
-              style={{
-                padding: '15px 30px',
-                backgroundColor: '#2C5F2D',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                flex: '1 1 200px'
-              }}
+              className="btn btn-large"
+              style={{ flex: 1, minWidth: '220px' }}
             >
               📄 Download PDF Report
             </button>
             <button
               onClick={restartQuiz}
-              style={{
-                padding: '15px 30px',
-                backgroundColor: '#6c757d',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '16px',
-                cursor: 'pointer',
-                flex: '1 1 200px'
-              }}
+              className="btn btn-large btn-outline"
+              style={{ flex: 1, minWidth: '220px' }}
             >
               🔄 Take Quiz Again
             </button>
           </div>
-          {message && (
-            <div className={`alert ${message.includes('Error') ? 'alert-error' : 'alert-success'}`} style={{ marginTop: '15px' }}>
-              {message}
-            </div>
-          )}
         </div>
       </div>
     );
   };
 
-  // Main render
   return (
     <div className="container">
       {step === 'intro' && renderIntro()}

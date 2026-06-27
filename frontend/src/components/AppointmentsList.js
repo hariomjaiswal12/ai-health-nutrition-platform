@@ -178,15 +178,15 @@ function AppointmentsList() {
   const getStatusColor = (status) => {
     switch (status) {
       case 'pending':
-        return '#FFA500';
+        return '#C5A880'; // Warm wheat gold
       case 'confirmed':
-        return '#2196F3';
+        return '#5E8267'; // Sage green
       case 'completed':
-        return '#4CAF50';
+        return '#8CA893'; // Muted green
       case 'cancelled':
-        return '#F44336';
+        return '#D07A60'; // Terracotta spice
       default:
-        return '#999';
+        return '#c2c0a5';
     }
   };
 
@@ -205,7 +205,12 @@ function AppointmentsList() {
   if (!isLoggedIn) {
     return (
       <div className="appointments-list-container">
-        <div className="error">Please login to view appointments</div>
+        <div className="error-message">
+          <p>Please login to view appointments</p>
+          <button onClick={() => navigate('/login')} className="btn-retry">
+            Log In
+          </button>
+        </div>
       </div>
     );
   }
@@ -225,7 +230,7 @@ function AppointmentsList() {
     return (
       <div className="appointments-list-container">
         <div className="error-message">
-          <p>❌ {error}</p>
+          <p>Unable to retrieve appointments: {error}</p>
           <button onClick={fetchAppointments} className="btn-retry">
             Try Again
           </button>
@@ -237,16 +242,17 @@ function AppointmentsList() {
   const filteredAppointments = getFilteredAppointments();
   const title =
     role === 'doctor'
-      ? '📅 Patient Appointments'
+      ? 'Patient Appointments'
       : role === 'admin'
-      ? '📅 All Appointments'
-      : '📅 My Appointments';
+      ? 'All Appointments'
+      : 'My Appointments';
 
   // ==================== MAIN RENDER ====================
   return (
     <div className="appointments-list-container">
       {/* Header */}
       <div className="appointments-header">
+        <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary)', fontWeight: '600', display: 'block', marginBottom: '0.5rem' }}>Scheduler</span>
         <h1>{title}</h1>
         <p className="subtitle">Manage your appointments and consultations</p>
       </div>
@@ -289,25 +295,29 @@ function AppointmentsList() {
                   {appointment.status.toUpperCase()}
                 </span>
                 <span className="appointment-date">
-                  📅 {formatDate(appointment.appointmentDate)}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '5px', verticalAlign: 'middle' }}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  {formatDate(appointment.appointmentDate)}
                 </span>
               </div>
 
               {/* Card Body */}
               <div className="card-body">
                 <p className="time">
-                  <strong>⏰ Time:</strong> {appointment.appointmentTime}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '3px' }}><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  <strong>Time:</strong> {appointment.appointmentTime}
                 </p>
 
                 {role === 'doctor' || role === 'admin' ? (
                   <p className="patient-name">
-                    <strong>👤 Patient:</strong>{' '}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '3px' }}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <strong>Patient:</strong>{' '}
                     {appointment.patientId?.username ||
                       appointment.patientName}
                   </p>
                 ) : (
                   <p className="doctor-name">
-                    <strong>👨‍⚕️ Doctor:</strong>{' '}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '3px' }}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <strong>Doctor:</strong>{' '}
                     {appointment.doctorId?.username ||
                       appointment.doctorName}
                   </p>
@@ -315,17 +325,18 @@ function AppointmentsList() {
 
                 {appointment.reason && (
                   <p className="reason">
-                    <strong>📝 Reason:</strong> {appointment.reason}
+                    <strong>Reason:</strong> {appointment.reason}
                   </p>
                 )}
 
                 <p className="contact-method">
-                  <strong>📞 Contact:</strong> {appointment.contactMethod}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '3px' }}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  <strong>Contact:</strong> {appointment.contactMethod}
                 </p>
 
                 {appointment.notes && (
                   <p className="notes">
-                    <strong>📌 Notes:</strong> {appointment.notes}
+                    <strong>Notes:</strong> {appointment.notes}
                   </p>
                 )}
               </div>
@@ -342,7 +353,8 @@ function AppointmentsList() {
                         }
                         disabled={updating === appointment._id}
                       >
-                        ✅ Confirm
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Confirm
                       </button>
                       <button
                         className="btn-cancel-action"
@@ -351,7 +363,8 @@ function AppointmentsList() {
                         }
                         disabled={updating === appointment._id}
                       >
-                        ❌ Cancel
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        Cancel
                       </button>
                     </>
                   )}
@@ -365,7 +378,8 @@ function AppointmentsList() {
                       }
                       disabled={updating === appointment._id}
                     >
-                      ✔️ Mark Complete
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      Complete
                     </button>
                   )}
 
@@ -377,7 +391,8 @@ function AppointmentsList() {
                     }
                     disabled={updating === appointment._id}
                   >
-                    ❌ Cancel Appointment
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    Cancel
                   </button>
                 )}
 
@@ -386,7 +401,8 @@ function AppointmentsList() {
                   onClick={() => handleDelete(appointment._id)}
                   disabled={updating === appointment._id}
                 >
-                  🗑️ Delete
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                  Delete
                 </button>
               </div>
             </div>
@@ -394,7 +410,7 @@ function AppointmentsList() {
         </div>
       ) : (
         <div className="no-appointments">
-          <p>😔 No appointments found</p>
+          <p>No appointments found</p>
           {filter !== 'all' && (
             <button
               className="btn-clear-filter"
@@ -408,7 +424,8 @@ function AppointmentsList() {
               className="btn-book-now"
               onClick={() => navigate('/doctors')}
             >
-              📅 Book an Appointment
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              Book an Appointment
             </button>
           )}
         </div>

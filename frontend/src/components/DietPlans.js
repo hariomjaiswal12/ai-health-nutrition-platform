@@ -24,6 +24,7 @@ function DietPlans() {
   // Fetch all data on component mount
   useEffect(() => {
     fetchAllData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchAllData = async () => {
@@ -69,11 +70,10 @@ function DietPlans() {
         const data = await apiClient('http://localhost:5000/users');
         setDoctors(data.filter(user => user.role === 'doctor' || user.role === 'admin'));
       } else {
-        // If not admin, get current user from localStorage
         const user = JSON.parse(localStorage.getItem('user'));
         if (user) {
           setDoctors([user]);
-          setForm(prev => ({ ...prev, doctorId: user.id }));
+          setForm(prev => ({ ...prev, doctorId: user.id || user._id }));
         }
       }
     } catch (err) {
@@ -86,9 +86,8 @@ function DietPlans() {
     e.preventDefault();
     setMessage('');
     
-    // Validate patient and doctor exist
     if (!form.patientId || !form.doctorId) {
-      setMessage('Please select both patient and doctor');
+      setMessage('❌ Please select both patient and doctor');
       return;
     }
 
@@ -124,7 +123,7 @@ function DietPlans() {
     const user = JSON.parse(localStorage.getItem('user'));
     setForm({
       patientId: '',
-      doctorId: user?.id || '',
+      doctorId: user?.id || user?._id || '',
       mealTime: 'Breakfast',
       foods: '',
       rasa: '',
@@ -209,21 +208,30 @@ function DietPlans() {
     return doctor ? `Dr. ${doctor.username}` : doctorId;
   };
 
-  if (!role) return <p className="text-center">Loading user info...</p>;
-  if (loading) return <p className="text-center">Loading diet plans...</p>;
-  if (error) return <p className="text-center" style={{ color: 'red' }}>{error}</p>;
+  if (!role) return <div className="container"><p className="text-center">Loading user info...</p></div>;
+  if (loading && dietPlans.length === 0) return <div className="container"><p className="text-center">Loading diet plans...</p></div>;
 
   return (
-    <div className="container">
-      <h2 className="mb-2">📋 Diet Plans Management</h2>
+    <div className="container" style={{ animation: 'fadeInDown 0.6s ease-out' }}>
+      <div className="section-header">
+        <h2>📋 Diet Plans Management</h2>
+        <p className="subtitle">Formulate, update, and export customized Ayurvedic nutrition plans aligned with patient prakriti.</p>
+      </div>
+
+      {message && (
+        <div className={`alert ${message.includes('❌') ? 'alert-error' : 'alert-success'}`} style={{ marginBottom: '20px' }}>
+          {message}
+        </div>
+      )}
       
       {(role === 'doctor' || role === 'admin') && (
-        <div className="card mb-3" style={{ backgroundColor: '#f9f9f9' }}>
-          <h3 style={{ color: '#2C5F2D' }}>{editId ? '✏️ Edit Diet Plan' : '➕ Add New Diet Plan'}</h3>
+        <div className="form-container mb-4">
+          <h3 style={{ marginTop: 0, marginBottom: '1.5rem', color: 'var(--primary-color)' }}>
+            {editId ? '✏️ Edit Diet Plan' : '➕ Create New Diet Plan'}
+          </h3>
           
           <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '15px' }}>
-              
+            <div className="form-row">
               <div className="form-group">
                 <label>Patient *</label>
                 <select 
@@ -270,207 +278,154 @@ function DietPlans() {
                   <option value="Dinner">Dinner</option>
                 </select>
               </div>
+            </div>
 
+            <div className="form-row">
               <div className="form-group">
-                <label>Rasa (Taste)</label>
+                <label>Rasa (Taste Profile)</label>
                 <input 
                   value={form.rasa} 
                   onChange={e => setForm({ ...form, rasa: e.target.value })}
-                  placeholder="e.g., Sweet, Bitter"
+                  placeholder="e.g., Madhura (Sweet), Kashaya (Astringent)"
                 />
               </div>
 
               <div className="form-group">
-                <label>Dosha Balance</label>
+                <label>Dosha Adjustments</label>
                 <input 
                   value={form.doshaBalance} 
                   onChange={e => setForm({ ...form, doshaBalance: e.target.value })}
-                  placeholder="e.g., Pitta reducing"
+                  placeholder="e.g., Pitta Pacifying, Vata Balancing"
                 />
               </div>
             </div>
 
             <div className="form-group">
-              <label>Foods (comma separated) *</label>
+              <label>Recommended Foods (Comma separated list) *</label>
               <input 
                 value={form.foods} 
                 onChange={e => setForm({ ...form, foods: e.target.value })}
-                placeholder="e.g., Rice, Lentils, Vegetables"
+                placeholder="e.g., Mung Dal, Basmati Rice, Ghee, Steamed Zucchini"
                 required
               />
             </div>
 
             <div className="form-group">
-              <label>Additional Notes</label>
+              <label>Clinical Instruction Notes</label>
               <textarea 
                 value={form.notes} 
                 onChange={e => setForm({ ...form, notes: e.target.value })}
-                placeholder="Any special instructions or dietary notes..."
+                placeholder="Specify special herbs, preparation methods, or hot/cold serving parameters..."
                 style={{ height: '80px' }}
               />
             </div>
 
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              <button 
-                type="submit" 
-                style={{ 
-                  padding: '12px 24px', 
-                  backgroundColor: '#2C5F2D', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                  fontSize: 'clamp(0.875rem, 2vw, 1rem)',
-                  fontWeight: 'bold',
-                  flex: '1 1 auto'
-                }}
-              >
-                {editId ? '💾 Update Diet Plan' : '➕ Add Diet Plan'}
-              </button>
-              
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '1rem' }}>
               {editId && (
                 <button 
                   type="button"
                   onClick={resetForm}
-                  style={{ 
-                    padding: '12px 24px', 
-                    backgroundColor: '#6c757d', 
-                    color: 'white', 
-                    border: 'none', 
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                    fontSize: 'clamp(0.875rem, 2vw, 1rem)',
-                    flex: '1 1 auto'
-                  }}
+                  className="btn btn-outline"
                 >
                   ❌ Cancel
                 </button>
               )}
+              <button 
+                type="submit" 
+                className="btn btn-success"
+              >
+                {editId ? '💾 Update Diet Plan' : '➕ Save Diet Plan'}
+              </button>
             </div>
-
-            {message && (
-              <div className={`alert ${message.includes('❌') ? 'alert-error' : 'alert-success'}`}>
-                {message}
-              </div>
-            )}
           </form>
         </div>
       )}
 
-      <div>
-        <h3 className="mb-2">All Diet Plans ({dietPlans.length})</h3>
-        
-        {dietPlans.length === 0 ? (
-          <p className="text-center" style={{ color: '#666', padding: '40px' }}>
-            📋 No diet plans created yet. {(role === 'doctor' || role === 'admin') && 'Create your first one above!'}
-          </p>
-        ) : (
-          <div className="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Patient</th>
-                  <th>Doctor</th>
-                  <th>Meal Time</th>
-                  <th>Foods</th>
-                  <th>Rasa</th>
-                  <th>Dosha</th>
-                  <th>Notes</th>
-                  <th style={{ textAlign: 'center' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dietPlans.map((plan, index) => (
-                  <tr key={plan._id} style={{ backgroundColor: index % 2 === 0 ? '#f9f9f9' : 'white' }}>
-                    <td>
-                      <strong>{getPatientName(plan.patientId)}</strong>
-                    </td>
-                    <td>
-                      {getDoctorName(plan.doctorId)}
-                    </td>
-                    <td>
-                      <span style={{ 
-                        padding: '4px 8px', 
-                        backgroundColor: '#e3f2fd', 
-                        borderRadius: '4px',
-                        fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
-                        whiteSpace: 'nowrap'
-                      }}>
-                        {plan.mealTime}
-                      </span>
-                    </td>
-                    <td style={{ maxWidth: '200px' }}>
-                      {Array.isArray(plan.foods) ? plan.foods.join(', ') : plan.foods}
-                    </td>
-                    <td>{plan.rasa || '-'}</td>
-                    <td>{plan.doshaBalance || '-'}</td>
-                    <td style={{ maxWidth: '150px' }}>
-                      {plan.notes || '-'}
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <div style={{ display: 'flex', gap: '5px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                        <button 
-                          onClick={() => handleDownloadPDF(plan._id)} 
-                          title="Download PDF"
-                          style={{ 
-                            padding: '6px 12px', 
-                            backgroundColor: '#f57c00', 
-                            color: 'white', 
-                            border: 'none', 
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
-                            whiteSpace: 'nowrap'
-                          }}
-                        >
-                          📄 PDF
-                        </button>
-
-                        {(role === 'doctor' || role === 'admin') && (
-                          <>
-                            <button 
-                              onClick={() => handleEdit(plan)} 
-                              title="Edit"
-                              style={{ 
-                                padding: '6px 12px', 
-                                backgroundColor: '#007bff', 
-                                color: 'white', 
-                                border: 'none', 
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
-                                whiteSpace: 'nowrap'
-                              }}
-                            >
-                              ✏️ Edit
-                            </button>
-                            <button 
-                              onClick={() => handleDelete(plan._id)} 
-                              title="Delete"
-                              style={{ 
-                                padding: '6px 12px', 
-                                backgroundColor: '#dc3545', 
-                                color: 'white', 
-                                border: 'none', 
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
-                                whiteSpace: 'nowrap'
-                              }}
-                            >
-                              🗑️ Delete
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+      {/* Diet Plan List */}
+      <div className="section-header" style={{ marginTop: '2rem' }}>
+        <h3>Active Formulations ({dietPlans.length})</h3>
       </div>
+      
+      {error && <div className="alert alert-error">{error}</div>}
+
+      {dietPlans.length === 0 ? (
+        <p className="text-center" style={{ color: '#666', padding: '40px' }}>
+          No diet plans created yet.
+        </p>
+      ) : (
+        <div className="table-wrapper">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Meal Time</th>
+                <th>Foods</th>
+                <th>Taste Profile</th>
+                <th>Dosha Action</th>
+                <th>Notes</th>
+                <th style={{ textAlign: 'center' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dietPlans.map((plan) => (
+                <tr key={plan._id}>
+                  <td><strong>{getPatientName(plan.patientId)}</strong></td>
+                  <td>{getDoctorName(plan.doctorId)}</td>
+                  <td>
+                    <span style={{ 
+                      padding: '4px 8px', 
+                      backgroundColor: '#E3F2FD', 
+                      color: '#0D47A1',
+                      borderRadius: '4px',
+                      fontSize: '0.8rem',
+                      fontWeight: 'bold',
+                      whiteSpace: 'nowrap'
+                    }}>
+                      {plan.mealTime}
+                    </span>
+                  </td>
+                  <td style={{ maxWidth: '200px' }}>{Array.isArray(plan.foods) ? plan.foods.join(', ') : plan.foods}</td>
+                  <td>{plan.rasa || '-'}</td>
+                  <td>{plan.doshaBalance || '-'}</td>
+                  <td style={{ maxWidth: '150px' }}>{plan.notes || '-'}</td>
+                  <td style={{ textAlign: 'center' }}>
+                    <div style={{ display: 'inline-flex', gap: '6px' }}>
+                      <button 
+                        onClick={() => handleDownloadPDF(plan._id)} 
+                        className="btn btn-small btn-secondary"
+                        style={{ backgroundColor: '#F57C00' }}
+                        title="Download PDF"
+                      >
+                        📄 PDF
+                      </button>
+
+                      {(role === 'doctor' || role === 'admin') && (
+                        <>
+                          <button 
+                            onClick={() => handleEdit(plan)} 
+                            className="btn btn-small btn-outline"
+                            title="Edit"
+                          >
+                            ✏️ Edit
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(plan._id)} 
+                            className="btn btn-small btn-danger"
+                            title="Delete"
+                          >
+                            🗑️ Delete
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
