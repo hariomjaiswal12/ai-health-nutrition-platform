@@ -9,19 +9,19 @@ Swasthya Sutra is a premium, full-stack **MERN (MongoDB, Express, React, Node.js
 
 ### 1. Elegant Landing Screen (Home)
 A beautifully designed split hero featuring system health pulses, Prakriti composition guides, and timeline milestones.
-![Swasthya Sutra Home Page](screenshots/home.png)
+<img src="screenshots/home.png" width="650" alt="Swasthya Sutra Home Page" />
 
 ### 2. Health Analytics Dashboard
 An interactive analytics center with demographics pie charts, food classification bar charts, and patient admissions registries.
-![Swasthya Sutra Dashboard](screenshots/dashboard.png)
+<img src="screenshots/dashboard.png" width="650" alt="Swasthya Sutra Dashboard" />
 
 ### 3. Appointments Scheduler
 A clinical appointments manager featuring status badge filtering (Pending, Confirmed, Completed, Cancelled) and Vaidya assignment cards.
-![Swasthya Sutra Scheduler](screenshots/appointments.png)
+<img src="screenshots/appointments.png" width="650" alt="Swasthya Sutra Scheduler" />
 
 ### 4. Glassmorphic Authentication
 A glass-card login and registration system with secure role selection (Patient, Doctor, Admin).
-![Swasthya Sutra Login](screenshots/login.png)
+<img src="screenshots/login.png" width="650" alt="Swasthya Sutra Login" />
 
 ---
 
