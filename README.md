@@ -38,7 +38,7 @@ Swasthya Sutra is a premium, full-stack **MERN (MongoDB, Express, React, Node.js
     </td>
     <td align="center" valign="top" style="border: none; padding: 12px; width: 50%;">
       <h3>🔐 Secure Authentication</h3>
-      <p>Glassmorphic form fields and custom role-based portals.</p>
+      <p>Glassmorphic form fields and custom role-based.</p>
       <img src="screenshots/login.png" width="390" alt="Swasthya Sutra Login" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
     </td>
   </tr>
